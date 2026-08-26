@@ -42,4 +42,5 @@ O servidor responde no endereço base `http://localhost:5000`.
 
 ---
 **Autor:** Lucas Santos
+
 **Autor:** Kaueh Farias
