@@ -1,0 +1,29 @@
+# Arquivos e diretórios gerados pelo Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Diretórios de build do .NET (Binários e Objetos)
+[Bb]in/
+[Oo]bj/
+TestResults/
+
+# Arquivos temporários e de cache
+*.cache
+*.tmp
+*.log
+
+# Banco de dados SQLite local (Evita commitar dados de teste)
+livros.db
+livros.db-shm
+livros.db-wal
+
+# Arquivos específicos do macOS (caso abra o projeto no Linux/Mac futuramente)
+.DS_Store
+
+# Arquivos de publicação
+[Pp]ublish/
+[Pp]ublished/
+out/
