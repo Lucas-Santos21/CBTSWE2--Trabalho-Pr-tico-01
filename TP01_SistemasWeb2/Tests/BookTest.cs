@@ -1,4 +1,4 @@
-﻿//Nome e prontuário da dupla:
+//Nome e prontuário da dupla:
 //Lucas da Silva Santos CB3030598
 //Kaueh Farias Ferreira dos Santos CB3031438
 
@@ -43,6 +43,31 @@ namespace TP01_SistemasWeb2.Tests
                 5
             );
 
+            Author author3 = new Author(
+                "Corinthians",
+                "Timão@email.com",
+                'T'
+                );
+
+            Author author4 = new Author(
+                "Anemona do nemo",
+                "mcnemao@email.com",
+                'N'
+            );
+
+            Author[] authors2 =
+            {
+            author3,
+            author4
+        };
+
+            Book book2 = new Book(
+                "Oloko bicho",
+                authors2,
+                295.50,
+                10
+            );
+
             Console.WriteLine();
             Console.WriteLine("1 - GetName()");
             Console.WriteLine(book.GetName());
@@ -64,12 +89,20 @@ namespace TP01_SistemasWeb2.Tests
             Console.WriteLine(book.GetPrice());
 
             Console.WriteLine();
+            Console.WriteLine("GetPrice()");
+            Console.WriteLine(book.GetPrice());
+
+            Console.WriteLine();
             Console.WriteLine("5 - GetQty()");
             Console.WriteLine(book.GetQty());
 
             Console.WriteLine();
             Console.WriteLine("6 - SetQty()");
             book.SetQty(10);
+            Console.WriteLine(book.GetQty());
+
+            Console.WriteLine();
+            Console.WriteLine("GetQty()");
             Console.WriteLine(book.GetQty());
 
             Console.WriteLine();
