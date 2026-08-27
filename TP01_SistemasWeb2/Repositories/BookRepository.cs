@@ -13,8 +13,10 @@ namespace TP01_SistemasWeb2.Repositories
 {
     public class BookRepository : IBookRepository
     {
-        public Book? GetBook()
+        public List<Book> GetBooks()
         {
+            List<Book> books = new List<Book>();
+
             using SqliteConnection connection = Database.GetConnection();
 
             using SqliteCommand command = connection.CreateCommand();
@@ -26,27 +28,36 @@ namespace TP01_SistemasWeb2.Repositories
                 b.Price,
                 b.Qty
             FROM Book b
-            LIMIT 1;
+            ORDER BY b.Id;
             """;
 
             using SqliteDataReader reader = command.ExecuteReader();
 
-            if (!reader.Read())
+            while (reader.Read())
             {
-                return null;
+                int bookId = reader.GetInt32(0);
+                string name = reader.GetString(1);
+                double price = reader.GetDouble(2);
+                int qty = reader.GetInt32(3);
+
+                Author[] authors = GetAuthors(connection, bookId);
+
+                Book book = new Book(
+                    name,
+                    authors,
+                    price,
+                    qty
+                );
+
+                books.Add(book);
             }
 
-            int bookId = reader.GetInt32(0);
-            string name = reader.GetString(1);
-            double price = reader.GetDouble(2);
-            int qty = reader.GetInt32(3);
-
-            Author[] authors = GetAuthors(connection, bookId);
-
-            return new Book(name, authors, price, qty);
+            return books;
         }
 
-        private Author[] GetAuthors(SqliteConnection connection, int bookId)
+        private Author[] GetAuthors(
+            SqliteConnection connection,
+            int bookId)
         {
             List<Author> authors = new List<Author>();
 
@@ -64,7 +75,10 @@ namespace TP01_SistemasWeb2.Repositories
             ORDER BY a.Id;
             """;
 
-            command.Parameters.AddWithValue("$bookId", bookId);
+            command.Parameters.AddWithValue(
+                "$bookId",
+                bookId
+            );
 
             using SqliteDataReader reader = command.ExecuteReader();
 
@@ -74,7 +88,9 @@ namespace TP01_SistemasWeb2.Repositories
                 string email = reader.GetString(1);
                 char gender = reader.GetString(2)[0];
 
-                authors.Add(new Author(name, email, gender));
+                authors.Add(
+                    new Author(name, email, gender)
+                );
             }
 
             return authors.ToArray();

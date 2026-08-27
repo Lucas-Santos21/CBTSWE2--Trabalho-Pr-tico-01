@@ -9,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TP01_SistemasWeb2.Data;
+using TP01_SistemasWeb2.Models;
 using TP01_SistemasWeb2.Repositories;
 
 namespace TP01_SistemasWeb2
@@ -26,6 +28,7 @@ namespace TP01_SistemasWeb2
 
             app.UseEndpoints(endpoints =>
             {
+
                 endpoints.MapGet("/", async context =>
                 {
                     await context.Response.WriteAsync(
@@ -36,130 +39,138 @@ namespace TP01_SistemasWeb2
                 endpoints.MapGet("/livro/nome", async context =>
                 {
                     IBookRepository repository =
-                        context.RequestServices.GetRequiredService<IBookRepository>();
+                        context.RequestServices
+                            .GetRequiredService<IBookRepository>();
 
-                    var book = repository.GetBook();
+                    List<Book> books = repository.GetBooks();
 
-                    if (book == null)
+                    context.Response.ContentType =
+                        "text/plain; charset=utf-8";
+
+                    foreach (Book book in books)
                     {
-                        context.Response.StatusCode = 404;
-
                         await context.Response.WriteAsync(
-                            "Livro não encontrado."
+                            $"Livro: {book.GetName()}\n"
                         );
-
-                        return;
                     }
-
-                    context.Response.ContentType = "text/plain; charset=utf-8";
-
-                    await context.Response.WriteAsync(
-                        book.GetName()
-                    );
                 });
 
                 endpoints.MapGet("/livro/tostring", async context =>
                 {
                     IBookRepository repository =
-                        context.RequestServices.GetRequiredService<IBookRepository>();
+                        context.RequestServices
+                            .GetRequiredService<IBookRepository>();
 
-                    var book = repository.GetBook();
+                    List<Book> books = repository.GetBooks();
 
-                    if (book == null)
+                    context.Response.ContentType =
+                        "text/plain; charset=utf-8";
+
+                    foreach (Book book in books)
                     {
-                        context.Response.StatusCode = 404;
-
                         await context.Response.WriteAsync(
-                            "Livro não encontrado."
+                            book.ToString() + "\n\n"
                         );
-
-                        return;
                     }
-
-                    context.Response.ContentType = "text/plain; charset=utf-8";
-
-                    await context.Response.WriteAsync(
-                        book.ToString()
-                    );
                 });
 
                 endpoints.MapGet("/livro/autores", async context =>
                 {
                     IBookRepository repository =
-                        context.RequestServices.GetRequiredService<IBookRepository>();
+                        context.RequestServices
+                            .GetRequiredService<IBookRepository>();
 
-                    var book = repository.GetBook();
-
-                    if (book == null)
-                    {
-                        context.Response.StatusCode = 404;
-
-                        await context.Response.WriteAsync(
-                            "Livro não encontrado."
-                        );
-
-                        return;
-                    }
-
-                    context.Response.ContentType = "text/plain; charset=utf-8";
-
-                    await context.Response.WriteAsync(
-                        book.GetAuthorNames()
-                    );
-                });
-
-                endpoints.MapGet("/livro/ApresentarLivro", async context =>
-                {
-                    IBookRepository repository =
-                        context.RequestServices.GetRequiredService<IBookRepository>();
-
-                    var book = repository.GetBook();
-
-                    if (book == null)
-                    {
-                        context.Response.StatusCode = 404;
-
-                        await context.Response.WriteAsync(
-                            "<h1>Livro não encontrado</h1>"
-                        );
-
-                        return;
-                    }
+                    List<Book> books = repository.GetBooks();
 
                     context.Response.ContentType =
-                        "text/html; charset=utf-8";
+                        "text/plain; charset=utf-8";
 
-                    string html = $"""
-                    <!DOCTYPE html>
-                    <html lang="pt-BR">
-                    <head>
-                        <meta charset="UTF-8">
-                        <title>Apresentação do Livro</title>
-                    </head>
+                    int contador = 1;
 
-                    <body>
-                        <h1>{book.GetName()}</h1>
-
-                        <h2>Autores</h2>
-
-                        <ul>
-                    """;
-
-                    foreach (var author in book.GetAuthors())
+                    foreach (Book book in books)
                     {
-                        html += $"""
-                            <li>{author.GetName()}</li>
-                        """;
+                        await context.Response.WriteAsync(
+                            $"Livro {contador}: {book.GetName()}\n"
+                        );
+
+                        await context.Response.WriteAsync(
+                            $"Autores: {book.GetAuthorNames()}\n\n"
+                        );
+
+                        contador++;
                     }
-
-                    html += """
-                        </ul>
-                    </body>
-                    </html>
-                    """;
-
-                    await context.Response.WriteAsync(html);
                 });
+
+                endpoints.MapGet(
+                    "/livro/ApresentarLivro",
+                    async context =>
+                    {
+                        IBookRepository repository =
+                            context.RequestServices
+                                .GetRequiredService<IBookRepository>();
+
+                        List<Book> books = repository.GetBooks();
+
+                        context.Response.ContentType =
+                            "text/html; charset=utf-8";
+
+                        string html = """
+                        <!DOCTYPE html>
+                        <html lang="pt-BR">
+
+                        <head>
+                            <meta charset="UTF-8">
+
+                            <title>
+                                Livros
+                            </title>
+                        </head>
+
+                        <body>
+
+                            <h1>Livros cadastrados</h1>
+                        """;
+
+                        int contador = 1;
+
+                        foreach (Book book in books)
+                        {
+                            html += $"""
+                            <hr>
+
+                            <h2>
+                                Livro {contador}: {book.GetName()}
+                            </h2>
+
+                            <h3>Autores</h3>
+
+                            <ul>
+                            """;
+
+                            foreach (Author author in book.GetAuthors())
+                            {
+                                html += $"""
+                                <li>
+                                    {author.GetName()}
+                                </li>
+                                """;
+                            }
+
+                            html += """
+                            </ul>
+                            """;
+
+                            contador++;
+                        }
+
+                        html += """
+                        </body>
+                        </html>
+                        """;
+
+                        await context.Response.WriteAsync(html);
+                    }
+                );
             });
         }
     }

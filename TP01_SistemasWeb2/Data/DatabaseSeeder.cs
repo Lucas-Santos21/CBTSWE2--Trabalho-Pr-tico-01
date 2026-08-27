@@ -15,7 +15,8 @@ namespace TP01_SistemasWeb2.Data
         {
             using SqliteConnection connection = Database.GetConnection();
 
-            using SqliteTransaction transaction = connection.BeginTransaction();
+            using SqliteTransaction transaction =
+                connection.BeginTransaction();
 
             using SqliteCommand command = connection.CreateCommand();
 
@@ -36,25 +37,40 @@ namespace TP01_SistemasWeb2.Data
             VALUES
                 ('Robert C. Martin', 'robert@email.com', 'M'),
                 ('John Doe', 'john@email.com', 'M'),
-                ('Jane Smith', 'jane@email.com', 'F');
+                ('Corinthians', 'Timao@email.com', 'T'),
+                ('Anemona do nemo', 'mcnemao@email.com', 'N');
             """;
 
             command.ExecuteNonQuery();
 
             command.CommandText = """
             INSERT INTO Book (Name, Price, Qty)
-            VALUES ('Clean Code', 89.90, 5);
+            VALUES
+                ('Clean Code', 89.90, 5),
+                ('Oloko bicho', 295.50, 10);
             """;
 
             command.ExecuteNonQuery();
 
             command.CommandText = """
             INSERT INTO BookAuthor (BookId, AuthorId)
-            SELECT
-                (SELECT Id FROM Book WHERE Name = 'Clean Code'),
-                Id
-            FROM Author
-            WHERE Name IN ('Robert C. Martin', 'John Doe');
+            VALUES
+                (
+                    (SELECT Id FROM Book WHERE Name = 'Clean Code'),
+                    (SELECT Id FROM Author WHERE Name = 'Robert C. Martin')
+                ),
+                (
+                    (SELECT Id FROM Book WHERE Name = 'Clean Code'),
+                    (SELECT Id FROM Author WHERE Name = 'John Doe')
+                ),
+                (
+                    (SELECT Id FROM Book WHERE Name = 'Oloko bicho'),
+                    (SELECT Id FROM Author WHERE Name = 'Corinthians')
+                ),
+                (
+                    (SELECT Id FROM Book WHERE Name = 'Oloko bicho'),
+                    (SELECT Id FROM Author WHERE Name = 'Anemona do nemo')
+                );
             """;
 
             command.ExecuteNonQuery();
