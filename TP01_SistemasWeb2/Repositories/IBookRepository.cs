@@ -11,6 +11,6 @@ namespace TP01_SistemasWeb2.Repositories
 {
     public interface IBookRepository
     {
-        Book? GetBook();
+        List<Book> GetBooks();
     }
 }
